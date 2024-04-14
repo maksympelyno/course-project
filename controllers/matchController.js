@@ -2,59 +2,20 @@ const { Match, Team } = require("../models/");
 
 exports.getAllMatches = async (req, res) => {
   try {
-    const matches = await Match.findAll({
-      include: [
-        { model: Team, as: "homeTeam" },
-        { model: Team, as: "awayTeam" },
-      ],
-    });
-
-    const responseBody = matches.map((match) => ({
-      match_id: match.match_id,
-      season_id: match.season_id,
-      hometeam_id: match.hometeam_id,
-      hometeam_name: match.homeTeam.name,
-      awayteam_id: match.awayteam_id,
-      awayteam_name: match.awayTeam.name,
-      stadium: match.stadium,
-      date: match.date,
-    }));
-
-    res.status(200).json(responseBody);
-  } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({
-      error: "Internal Server Error",
-    });
-  }
-};
-
-exports.getMatchesBySeason = async (req, res) => {
-  try {
-    const { season_id } = req.params;
+    let whereClause = {};
+    if (req.query.seasonId) {
+      whereClause.season_id = req.query.seasonId;
+    }
 
     const matches = await Match.findAll({
-      where: {
-        season_id: season_id,
-      },
+      where: whereClause, // Додавання умови пошуку
       include: [
         { model: Team, as: "homeTeam", attributes: ["name"] },
         { model: Team, as: "awayTeam", attributes: ["name"] },
       ],
+      order: [["date", "ASC"]],
     });
-
-    const responseBody = matches.map((match) => ({
-      match_id: match.match_id,
-      season_id: match.season_id,
-      hometeam_id: match.hometeam_id,
-      hometeam_name: match.homeTeam.name,
-      awayteam_id: match.awayteam_id,
-      awayteam_name: match.awayTeam.name,
-      stadium: match.stadium,
-      date: match.date,
-    }));
-
-    res.status(200).json(responseBody);
+    res.status(200).json(matches);
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({
@@ -74,7 +35,12 @@ exports.getMatchById = async (req, res) => {
       });
     }
 
-    const match = await Match.findByPk(match_id);
+    const match = await Match.findByPk(match_id, {
+      include: [
+        { model: Team, as: "homeTeam", attributes: ["name"] },
+        { model: Team, as: "awayTeam", attributes: ["name"] },
+      ],
+    });
 
     if (!match) {
       return res.status(404).json({
@@ -82,16 +48,7 @@ exports.getMatchById = async (req, res) => {
       });
     }
 
-    const responseBody = {
-      match_id: match.match_id,
-      season_id: match.season_id,
-      hometeam_id: match.hometeam_id,
-      awayteam_id: match.awayteam_id,
-      stadium: match.stadium,
-      date: match.date,
-    };
-
-    res.status(200).json(responseBody);
+    res.status(200).json(match);
   } catch (error) {
     console.error("Error:", error);
     return res.status(500).json({
@@ -119,16 +76,7 @@ exports.createMatch = async (req, res) => {
       date,
     });
 
-    const responseBody = {
-      match_id: newMatch.match_id,
-      season_id: newMatch.season_id,
-      hometeam_id: newMatch.hometeam_id,
-      awayteam_id: newMatch.awayteam_id,
-      stadium: newMatch.stadium,
-      date: newMatch.date,
-    };
-
-    res.status(201).json(responseBody);
+    res.status(201).json(newMatch);
   } catch (error) {
     console.error("Error:", error);
 
@@ -168,13 +116,7 @@ exports.updateMatch = async (req, res) => {
 
     await match.save();
 
-    return res.status(200).json({
-      match_id: match.match_id,
-      hometeam_id: match.hometeam_id,
-      awayteam_id: match.awayteam_id,
-      date: match.date,
-      stadium: match.stadium,
-    });
+    return res.status(200).json(match);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal Server Error" });

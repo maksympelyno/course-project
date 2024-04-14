@@ -10,6 +10,4 @@ router
   .delete(matchController.deleteMatch)
   .put(matchController.updateMatch);
 
-router.route("/season/:season_id").get(matchController.getMatchesBySeason);
-
 module.exports = router;

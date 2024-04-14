@@ -4,13 +4,7 @@ exports.getAllLeagues = async (req, res) => {
   try {
     const leagues = await League.findAll();
 
-    const responseBody = leagues.map((league) => ({
-      league_id: league.league_id,
-      country: league.country,
-      name: league.name,
-    }));
-
-    res.status(200).json(responseBody);
+    res.status(200).json(leagues);
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({
@@ -25,7 +19,6 @@ exports.getAllLeagues = async (req, res) => {
 exports.getLeagueById = async (req, res) => {
   try {
     const league_id = req.params.id;
-    console.log(`Getting league with ID: ${league_id}`);
 
     if (isNaN(league_id)) {
       return res.status(400).json({
@@ -40,13 +33,7 @@ exports.getLeagueById = async (req, res) => {
         error: "League not found.",
       });
     }
-    const responseBody = {
-      league_id: league.league_id,
-      country: league.country,
-      name: league.name,
-    };
-
-    res.status(200).json(responseBody);
+    res.status(200).json(league);
   } catch (error) {
     console.error("Error:", error);
     return res.status(500).json({
@@ -57,9 +44,8 @@ exports.getLeagueById = async (req, res) => {
 
 exports.createLeague = async (req, res) => {
   try {
-    console.log("Creating a new league");
-    console.log(req.body);
     const { country, name } = req.body;
+
     if (!country || !name) {
       return res.status(400).json({
         error: "Something is missing",
@@ -76,16 +62,9 @@ exports.createLeague = async (req, res) => {
       }
     );
 
-    const responseBody = {
-      league_id: newLeague.league_id,
-      country: newLeague.country,
-      name: newLeague.name,
-    };
-
-    res.status(201).json(responseBody);
+    res.status(201).json(newLeague);
   } catch (error) {
     console.error("Error:", error);
-
     return res.status(500).json({
       error: "Internal Server Error",
     });
@@ -95,7 +74,6 @@ exports.createLeague = async (req, res) => {
 exports.deleteLeague = async (req, res) => {
   try {
     const leagueId = req.params.id;
-    console.log(leagueId);
     const league = await League.findByPk(leagueId);
 
     await league.destroy();
@@ -119,11 +97,7 @@ exports.updateLeague = async (req, res) => {
 
     await league.save();
 
-    return res.status(200).json({
-      league_id: league.league_id,
-      name: league.name,
-      country: league.country,
-    });
+    return res.status(200).json(league);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal Server Error" });

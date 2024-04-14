@@ -2,15 +2,15 @@ const { Season } = require("../models");
 
 exports.getAllSeasons = async (req, res) => {
   try {
-    const seasons = await Season.findAll();
+    let whereClause = {};
+    if (req.query.leagueId) {
+      whereClause.league_id = req.query.leagueId;
+    }
 
-    const responseBody = seasons.map((season) => ({
-      season_id: season.season_id,
-      league_id: season.league_id,
-      name: season.name,
-    }));
-
-    res.status(200).json(responseBody);
+    const seasons = await Season.findAll({
+      where: whereClause,
+    });
+    res.status(200).json(seasons);
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({
@@ -34,14 +34,7 @@ exports.getSeasonById = async (req, res) => {
         error: "Season not found.",
       });
     }
-
-    const responseBody = {
-      season_id: season.season_id,
-      league_id: season.league_id,
-      name: season.name,
-    };
-
-    res.status(200).json(responseBody);
+    res.status(200).json(season);
   } catch (error) {
     console.error("Error:", error);
     return res.status(500).json({
@@ -69,13 +62,7 @@ exports.createSeason = async (req, res) => {
         fields: ["league_id", "name"],
       }
     );
-    const responseBody = {
-      league_id: newSeason.league_id,
-      season_id: newSeason.season_id,
-      name: newSeason.name,
-    };
-
-    res.status(201).json(responseBody);
+    res.status(201).json(newSeason);
   } catch (error) {
     console.error("Error:", error);
     return res.status(500).json({
