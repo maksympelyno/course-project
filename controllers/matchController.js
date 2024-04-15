@@ -10,8 +10,8 @@ exports.getAllMatches = async (req, res) => {
     const matches = await Match.findAll({
       where: whereClause, // Додавання умови пошуку
       include: [
-        { model: Team, as: "homeTeam", attributes: ["name"] },
-        { model: Team, as: "awayTeam", attributes: ["name"] },
+        { model: Team, as: "homeTeam" },
+        { model: Team, as: "awayTeam" },
       ],
       order: [["date", "ASC"]],
     });

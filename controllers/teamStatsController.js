@@ -1,6 +1,8 @@
 const { Op } = require("sequelize");
 const { TeamStats } = require("../models");
 const { Season } = require("../models");
+const sequelize = require("../config/db.js");
+const { QueryTypes } = require("sequelize");
 
 async function getTeamStats(req, res) {
   try {
@@ -26,7 +28,22 @@ async function getTeamStats(req, res) {
     res.status(500).json({ error: "Internal server error" });
   }
 }
+async function getTeamStatsAndTable(req, res) {
+  try {
+    const { seasonId, teamId } = req.query;
+    console.log(sequelize);
+    const results = await sequelize.query(`SELECT * FROM GetTeamStatsAndTableEntry(${seasonId}, ${teamId})`, {
+      type: QueryTypes.SELECT,
+    });
+
+    res.json(results);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
 
 module.exports = {
   getTeamStats,
+  getTeamStatsAndTable,
 };
