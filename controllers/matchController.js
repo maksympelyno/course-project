@@ -25,6 +25,34 @@ exports.getAllMatches = async (req, res) => {
   }
 };
 
+exports.getMatchesWithoutStatistics = async (req, res) => {
+  console.log("here chec");
+  try {
+    const matchesWithoutStatistics = await sequelize.query(
+      `SELECT m.match_id,
+      home_team.name AS home_team_name, 
+      away_team.name AS away_team_name,
+      season.name AS season_name
+ FROM Match AS m 
+LEFT JOIN Team AS home_team ON m.hometeam_id = home_team.team_id 
+LEFT JOIN Team AS away_team ON m.awayteam_id = away_team.team_id 
+LEFT JOIN Season AS season ON m.season_id = season.season_id
+WHERE m.match_id NOT IN 
+      (SELECT match_id FROM MatchStatistics)`,
+      {
+        type: QueryTypes.SELECT,
+      }
+    );
+
+    res.status(200).json(matchesWithoutStatistics);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({
+      error: "Internal Server Error",
+    });
+  }
+};
+
 exports.getMatchById = async (req, res) => {
   try {
     const match_id = req.params.id;

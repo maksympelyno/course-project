@@ -4,6 +4,8 @@ const matchController = require("../controllers/matchController.js");
 
 router.route("/").get(matchController.getAllMatches).post(matchController.createMatch);
 
+router.route("/withoutStats").get(matchController.getMatchesWithoutStatistics);
+
 router
   .route("/:id")
   .get(matchController.getMatchById)

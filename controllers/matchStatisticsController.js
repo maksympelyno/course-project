@@ -25,7 +25,6 @@ exports.getMatchStatistics = async (req, res) => {
 exports.createMatchStatistics = async (req, res) => {
   try {
     const { matchId, homeTeamScore, awayTeamScore, possession, homeTeamShot, awayTeamShot } = req.body;
-
     if (!matchId || !homeTeamScore || !awayTeamScore || !possession || !homeTeamShot || !awayTeamShot) {
       return res.status(400).json({ error: "All fields are required" });
     }
@@ -38,7 +37,6 @@ exports.createMatchStatistics = async (req, res) => {
       hometeam_shot: homeTeamShot,
       awayteam_shot: awayTeamShot,
     });
-
     res.status(201).json(newMatchStatistics);
   } catch (error) {
     console.error("Error:", error);
