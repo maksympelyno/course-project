@@ -1,5 +1,6 @@
 const { Match, Team } = require("../models/");
-
+const sequelize = require("../config/db.js");
+const { QueryTypes } = require("sequelize");
 exports.getAllMatches = async (req, res) => {
   try {
     let whereClause = {};
@@ -59,8 +60,6 @@ exports.getMatchById = async (req, res) => {
 
 exports.createMatch = async (req, res) => {
   try {
-    console.log("Creating a new match");
-    console.log(req.body);
     const { season_id, hometeam_id, awayteam_id, stadium, date } = req.body;
     if (!season_id || !hometeam_id || !awayteam_id || !stadium || !date) {
       return res.status(400).json({
@@ -68,15 +67,11 @@ exports.createMatch = async (req, res) => {
       });
     }
 
-    const newMatch = await Match.create({
-      season_id,
-      hometeam_id,
-      awayteam_id,
-      stadium,
-      date,
+    const result = await sequelize.query(`CALL CreateMatch(:season_id, :hometeam_id, :awayteam_id, :stadium, :date)`, {
+      replacements: { season_id, hometeam_id, awayteam_id, stadium, date },
     });
 
-    res.status(201).json(newMatch);
+    res.status(201).json(result);
   } catch (error) {
     console.error("Error:", error);
 

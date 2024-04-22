@@ -9,7 +9,7 @@ const teamStatsRouter = require("./routes/teamStatsRouter.js");
 const matchStatisticsRouter = require("./routes/matchStatisticsRouter.js");
 const seasonRouter = require("./routes/seasonRouter.js");
 const playerRouter = require("./routes/playerRouter.js");
-
+const teamRouter = require("./routes/teaamRouter.js");
 app.use(express.json());
 app.use(cors());
 
@@ -21,5 +21,6 @@ app.use("/team-stats", teamStatsRouter);
 app.use("/match-stats", matchStatisticsRouter);
 app.use("/season", seasonRouter);
 app.use("/search", playerRouter);
+app.use("/team", teamRouter);
 
 module.exports = app;
