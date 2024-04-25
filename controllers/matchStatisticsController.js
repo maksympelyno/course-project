@@ -46,25 +46,26 @@ exports.createMatchStatistics = async (req, res) => {
 
 exports.updateMatchStatistics = async (req, res) => {
   try {
-    const { matchId } = req.params;
-    const { homeTeamScore, awayTeamScore, possession, homeTeamShot, awayTeamShot } = req.body;
+    const { matchStatId } = req.params;
+    const { match_id, hometeam_score, awayteam_score, possession, hometeam_shot, awayteam_shot } = req.body;
 
-    if (!matchId || !homeTeamScore || !awayTeamScore || !possession || !homeTeamShot || !awayTeamShot) {
+    if (!matchStatId || !hometeam_score || !awayteam_score || !possession || !hometeam_shot || !awayteam_shot) {
       return res.status(400).json({ error: "All fields are required" });
     }
 
-    const matchStatistics = await MatchStatistics.findByPk(matchId);
+    const matchStatistics = await MatchStatistics.findByPk(matchStatId);
 
     if (!matchStatistics) {
       return res.status(404).json({ error: "Match statistics not found" });
     }
 
     await matchStatistics.update({
-      hometeam_score: homeTeamScore,
-      awayteam_score: awayTeamScore,
-      possession: possession,
-      hometeam_shot: homeTeamShot,
-      awayteam_shot: awayTeamShot,
+      match_id,
+      hometeam_score,
+      awayteam_score,
+      possession,
+      hometeam_shot,
+      awayteam_shot,
     });
 
     res.status(200).json(matchStatistics);

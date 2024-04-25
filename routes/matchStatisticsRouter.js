@@ -8,7 +8,7 @@ router
   .post(matchStatisticsController.createMatchStatistics);
 
 router
-  .route("/:matchId")
+  .route("/:matchStatId")
   .put(matchStatisticsController.updateMatchStatistics)
   .delete(matchStatisticsController.deleteMatchStatistics);
 
