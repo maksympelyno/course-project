@@ -1,4 +1,8 @@
-const { Match, Team } = require("../models/");
+const path = require("path");
+const fs = require("fs");
+const { fillingPDF } = require("../services/pdfService.js");
+const pdf = require("html-pdf");
+const { Match, Team, Season } = require("../models/");
 const sequelize = require("../config/db.js");
 const { QueryTypes } = require("sequelize");
 exports.getAllMatches = async (req, res) => {
@@ -112,11 +116,10 @@ exports.createMatch = async (req, res) => {
 exports.deleteMatch = async (req, res) => {
   try {
     const matchId = req.params.id;
-    console.log(matchId);
-    const match = await Match.findByPk(matchId);
 
-    await match.destroy();
-
+    const result = await sequelize.query(`CALL DeleteMatch(:matchId)`, {
+      replacements: { matchId },
+    });
     return res.status(204).json("Successfully deleted");
   } catch (error) {
     console.error(error);
@@ -144,4 +147,56 @@ exports.updateMatch = async (req, res) => {
     console.error(error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
+};
+
+exports.createPdfWithMatches = async (req, res) => {
+  const matches = await Match.findAll({
+    include: [
+      { model: Season, as: "season" },
+      { model: Team, as: "homeTeam" },
+      { model: Team, as: "awayTeam" },
+    ],
+    order: [["date", "ASC"]],
+  });
+  pdf.create(fillingPDF(matches), {}).toFile("result.pdf", (err) => {
+    if (err) {
+      res.send(Promise.reject());
+    }
+
+    res.send(Promise.resolve());
+  });
+};
+
+exports.createJsonWithMatches = async (req, res) => {
+  try {
+    const matches = await Match.findAll({
+      include: [
+        { model: Team, as: "homeTeam" },
+        { model: Team, as: "awayTeam" },
+      ],
+      order: [["date", "ASC"]],
+    });
+
+    const jsonContent = JSON.stringify(matches);
+    fs.writeFile("result.json", jsonContent, "utf8", (err) => {
+      if (err) {
+        console.error("Error creating JSON file:", err);
+        return res.status(500).send("Error creating JSON file");
+      }
+      res.status(200).send("JSON file created successfully");
+    });
+  } catch (error) {
+    console.error("Error fetching matches:", error);
+    res.status(500).send("Error fetching matches");
+  }
+};
+
+exports.fetchPdfWithMatches = async (req, res) => {
+  const filePath = path.join(__dirname, "../result.pdf");
+  res.sendFile(filePath);
+};
+
+exports.fetchJsonWithMatches = async (req, res) => {
+  const filePath = path.join(__dirname, "../result.json");
+  res.sendFile(filePath);
 };

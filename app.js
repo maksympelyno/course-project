@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const bodyParser = require("body-parser");
 const app = express();
 
 const sequelize = require("./config/db.js");
@@ -12,6 +13,8 @@ const playerRouter = require("./routes/playerRouter.js");
 const teamRouter = require("./routes/teaamRouter.js");
 app.use(express.json());
 app.use(cors());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 sequelize.sync();
 

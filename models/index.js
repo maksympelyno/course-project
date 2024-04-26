@@ -26,7 +26,7 @@ League.hasMany(Season, { foreignKey: "league_id" });
 Season.belongsTo(League, { foreignKey: "league_id" });
 
 Season.hasMany(Match, { foreignKey: "season_id" });
-Match.belongsTo(Season, { foreignKey: "season_id" });
+Match.belongsTo(Season, { foreignKey: "season_id", as: "season" });
 
 Team.hasMany(Player, { foreignKey: "team_id" });
 Player.belongsTo(Team, { foreignKey: "team_id" });
