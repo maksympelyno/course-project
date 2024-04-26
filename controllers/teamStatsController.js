@@ -43,7 +43,22 @@ async function getTeamStatsAndTable(req, res) {
   }
 }
 
+async function getTeamStatForChart(req, res) {
+  try {
+    const { teamChart } = req.query;
+
+    const results = await sequelize.query(`SELECT * FROM get_team_stats_chart('${teamChart}')`, {
+      type: QueryTypes.SELECT,
+    });
+
+    res.json(results);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
 module.exports = {
   getTeamStats,
   getTeamStatsAndTable,
+  getTeamStatForChart,
 };
