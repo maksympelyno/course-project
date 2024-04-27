@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const teamStatsController = require("../controllers/teamStatsController");
+const verifyRoles = require("../middleware/verifyRoles");
+const ROLES_LIST = require("../config/roles_list.js");
 
-// Маршрут для отримання статистики команди
 router.get("/", teamStatsController.getTeamStats);
-router.get("/chart", teamStatsController.getTeamStatForChart);
+router.get("/chart", verifyRoles(ROLES_LIST.Admin, ROLES_LIST.PremiumUser), teamStatsController.getTeamStatForChart);
 
-//router.get("/test", teamStatsController.getTeamStatsAndTable);
 module.exports = router;
