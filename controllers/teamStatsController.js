@@ -32,7 +32,7 @@ async function getTeamStatsAndTable(req, res) {
   try {
     const { seasonId, teamId } = req.query;
     console.log(sequelize);
-    const results = await sequelize.query(`SELECT * FROM GetTeamStatsAndTableEntry(${seasonId}, ${teamId})`, {
+    const results = await sequelize.query(`SELECT * FROM GetTeamStatsAndTable(${seasonId}, ${teamId})`, {
       type: QueryTypes.SELECT,
     });
 

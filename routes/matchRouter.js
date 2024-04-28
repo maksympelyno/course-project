@@ -6,19 +6,11 @@ const ROLES_LIST = require("../config/roles_list.js");
 
 router.route("/").get(matchController.getAllMatches).post(verifyRoles(ROLES_LIST.Admin), matchController.createMatch);
 
-router
-  .route("/fetch-pdf")
-  .get(verifyRoles(ROLES_LIST.Admin, ROLES_LIST.PremiumUser), matchController.fetchPdfWithMatches);
-router
-  .route("/create-pdf")
-  .post(verifyRoles(ROLES_LIST.Admin, ROLES_LIST.PremiumUser), matchController.createPdfWithMatches);
+router.route("/fetch-pdf").get(matchController.fetchPdfWithMatches);
+router.route("/create-pdf").post(matchController.createPdfWithMatches);
 
-router
-  .route("/fetch-json")
-  .get(verifyRoles(ROLES_LIST.Admin, ROLES_LIST.PremiumUser), matchController.fetchJsonWithMatches);
-router
-  .route("/create-json")
-  .post(verifyRoles(ROLES_LIST.Admin, ROLES_LIST.PremiumUser), matchController.createJsonWithMatches);
+router.route("/fetch-json").get(matchController.fetchJsonWithMatches);
+router.route("/create-json").post(matchController.createJsonWithMatches);
 
 router.route("/withoutStats").get(verifyRoles(ROLES_LIST.Admin), matchController.getMatchesWithoutStatistics);
 
